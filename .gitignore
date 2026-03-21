@@ -1,0 +1,21 @@
+# Virtual Environment
+venv/
+.env
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+
+# VS Code
+.vscode/
+
+# Betriebssystem
+.DS_Store
+Thumbs.db
+
+# Daten
+data/
+
+# Outputs werden lokal gespeichert
+outputs/
