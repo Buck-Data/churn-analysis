@@ -1,74 +1,100 @@
 # Customer Churn Analysis
-![Python](https://img.shields.io/badge/Python-3.11-blue)
-![ML](https://img.shields.io/badge/Machine%20Learning-XGBoost-orange)
-![Status](https://img.shields.io/badge/Status-In%20Progress-yellow)
 
-## 📌 Project Overview
-This project predicts customer churn for a telecom company using machine 
-learning. It covers the full data science workflow — from EDA to model 
-evaluation and business insights.
+## Was ist das Projekt?
 
-**Dataset:** [Telco Customer Churn – Kaggle](https://www.kaggle.com/datasets/blastchar/telco-customer-churn)
+Dieses Projekt analysiert, warum Kunden eines Telekommunikationsunternehmens kündigen. Ziel war es, aus echten Kundendaten herauszufinden welche Faktoren am stärksten mit Churn zusammenhängen und darauf basierend ein Modell zu bauen, das gefährdete Kunden frühzeitig erkennt.
+
+Die Analyse basiert auf dem Telco Customer Churn Dataset von Kaggle mit 7043 Kunden und 21 Features.
 
 ---
 
-## 🎯 Objectives
-- Identify key drivers of customer churn
-- Build and compare classification models
-- Derive actionable business recommendations
+## Ergebnisse auf einen Blick
+
+Nach der Analyse haben sich fünf klare Muster herauskristallisiert:
+
+Kunden mit Monatskontrakten kündigen mit einer Rate von ca. 43%, während Jahreskunden nur bei 11% liegen. Das ist der stärkste einzelne Faktor im gesamten Dataset.
+
+Churner zahlen im Median 80 USD pro Monat, verglichen mit 65 USD bei treuen Kunden. Günstigere Kunden bleiben deutlich loyaler.
+
+Die ersten 12 Monate sind die gefährlichste Phase. Danach sinkt die Abwanderungsrate kontinuierlich. Kunden die länger als zwei Jahre bleiben kündigen kaum noch.
+
+Kunden ohne OnlineSecurity oder TechSupport churnen mit über 41%, während Kunden mit diesen Services nur bei 14 bis 15% liegen. Das ist der stärkste Hebel für Retention.
+
+Kunden die per Electronic Check zahlen kündigen zu 45.3%, also fast dreimal häufiger als Kunden mit automatischen Zahlungsmethoden wie Kreditkarte oder Lastschrift.
 
 ---
 
-## 🛠️ Tech Stack
-| Tool | Purpose |
-|---|---|
-| Pandas & NumPy | Data manipulation |
-| Matplotlib & Seaborn | Visualization |
-| Scikit-learn | Preprocessing & modeling |
-| XGBoost | Gradient boosting model |
-| SHAP | Model explainability |
-| Imbalanced-learn | Handling class imbalance (SMOTE) |
+## Modell Performance
+
+Ich habe drei Modelle trainiert und miteinander verglichen:
+
+| Modell | AUC-ROC | Accuracy |
+|--------|---------|----------|
+| Logistic Regression | 0.840 | 80% |
+| Random Forest | 0.825 | 80% |
+| XGBoost | 0.823 | 78% |
+
+Das finale Modell ist Logistic Regression mit einem AUC-ROC Score von 0.84. Trotz einfacherer Architektur hat es die komplexeren Modelle geschlagen, was bei diesem Dataset mit vielen kategorischen Features und ca. 7000 Zeilen nicht ungewöhnlich ist.
 
 ---
 
-## 📁 Project Structure
+## Business Empfehlungen
+
+Basierend auf den Findings würde ich folgende Maßnahmen vorschlagen:
+
+Monatskunden sollten aktiv zu Jahresverträgen konvertiert werden, zum Beispiel durch Rabatte oder exklusive Vorteile bei längerer Bindung.
+
+Ein strukturiertes Onboarding in den ersten 90 Tagen würde Early Churn deutlich reduzieren. Konkret: proaktiver Kundenkontakt nach 30, 60 und 90 Tagen.
+
+OnlineSecurity und TechSupport sollten als Bundle aktiv vermarktet werden, da sie die Churn Rate fast dritteln.
+
+Electronic Check Kunden sollten als Risikogruppe markiert werden. Ein Anreiz zum Wechsel auf automatische Zahlung wäre eine einfache und günstige Maßnahme.
+
+---
+
+## Projektstruktur
+
 ```
-churn-analysis/
-├── data/               ← Raw dataset (not tracked by Git)
-├── src/
-│   ├── 01_eda.py       ← Exploratory Data Analysis
-│   ├── 02_preprocessing.py
-│   ├── 03_modeling.py
-│   └── 04_evaluation.py
-├── outputs/
-│   └── plots/          ← Generated visualizations
-├── .gitignore
+customer-churn-analysis/
+│
+├── data/
+│   ├── raw/                  
+│   └── processed/            
+│
+├── notebooks/
+│   ├── 01_EDA.ipynb
+│   └── 02_modeling.ipynb
+│
+├── reports/
+│   └── figures/              
+│
 ├── requirements.txt
 └── README.md
 ```
 
 ---
 
-## ⚙️ Setup
+## Installation
+
 ```bash
-# 1. Repository klonen
-git clone https://github.com/DEIN-USERNAME/churn-analysis.git
-cd churn-analysis
+git clone https://github.com/Buck-Data/customer-churn-analysis.git
+cd customer-churn-analysis
 
-# 2. Virtual Environment erstellen & aktivieren
 python -m venv venv
-venv\Scripts\activate
+source venv/bin/activate        # Mac/Linux
+venv\Scripts\activate           # Windows
 
-# 3. Libraries installieren
 pip install -r requirements.txt
 ```
 
 ---
 
-## 📊 Results
-*Coming soon – model evaluation and key findings will be added here.*
+## Tech Stack
+
+Python 3.11, pandas, numpy, matplotlib, seaborn, scikit-learn, xgboost
 
 ---
 
-## 👤 Author
-Marcel Buck
+## Dataset
+
+Telco Customer Churn Dataset von Kaggle, bereitgestellt von IBM Watson Analytics. Das Dataset enthält demografische Daten, Vertragsinformationen, genutzte Services und die Churn-Variable als Zielvariable.
