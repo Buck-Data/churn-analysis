@@ -11,11 +11,9 @@ with open('models/scaler.pkl', 'rb') as f:
 st.set_page_config(page_title="Churn Prediction", page_icon="📊")
 
 st.title("Customer Churn Prediction")
-st.write("Nur die Faktoren die wirklich einen Einfluss auf Churn haben.")
+st.write("Ein interaktives Tool zur Vorhersage von Kundenkündigungen basierend auf einem trainierten Machine Learning Modell.")
 
-# Info Box
-st.info("Basierend auf unserer Analyse haben diese 7 Faktoren den "
-        "stärksten Einfluss auf Kundenkündigung.")
+st.info("Basierend auf meiner Analyse haben diese 7 Faktoren den stärksten Einfluss auf Kundenkündigung.")
 
 st.divider()
 
@@ -32,8 +30,8 @@ with col1:
         "Vertragslaufzeit (Monate)", 0, 72, 12,
         help="Neue Kunden kündigen am häufigsten"
     )
-    monthly = st.slider(
-        "Monatliche Kosten (USD)", 18, 120, 65,
+    monthly = st.number_input(
+        "Monatliche Kosten (USD)", min_value=18, max_value=120, value=65, step=5,
         help="Churner zahlen im Median 15 USD mehr"
     )
     payment = st.selectbox(
@@ -65,9 +63,7 @@ st.divider()
 
 if st.button("Churn Risiko berechnen", type="primary", use_container_width=True):
 
-    # Unwichtige Features – Standardwerte gesetzt
     input_data = pd.DataFrame([{
-        # Standardwerte für schwache Features
         'gender'          : 1,
         'SeniorCitizen'   : 0,
         'Partner'         : 1,
@@ -94,6 +90,12 @@ if st.button("Churn Risiko berechnen", type="primary", use_container_width=True)
         'OnlineSecurity'  : {"No": 0, "No internet service": 1, "Yes": 2}[security],
         'TechSupport'     : {"No": 0, "No internet service": 1, "Yes": 2}[tech],
     }])
+
+    input_data = input_data[['gender', 'SeniorCitizen', 'Partner', 'Dependents', 'tenure',
+                          'PhoneService', 'MultipleLines', 'InternetService', 'OnlineSecurity',
+                          'OnlineBackup', 'DeviceProtection', 'TechSupport', 'StreamingTV',
+                          'StreamingMovies', 'Contract', 'PaperlessBilling', 'PaymentMethod',
+                          'MonthlyCharges', 'TotalCharges']]
 
     input_scaled = scaler.transform(input_data)
     churn_prob = modell.predict_proba(input_scaled)[0][1]
