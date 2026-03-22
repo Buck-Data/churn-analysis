@@ -121,11 +121,13 @@ if st.button("Churn Risiko berechnen", type="primary", use_container_width=True)
     if tenure < 12:
         faktoren.append("Neukunde in der kritischen ersten Phase")
     if security == "No":
-        faktoren.append("Kein Online Security Service")
+        faktoren.append("Kein Online Security Service verringert die Kundenbindung")
     if tech == "No":
-        faktoren.append("Kein Tech Support Service")
+        faktoren.append("Kein Tech Support Service verringert die Kundenbindung")
     if internet == "Fiber optic":
         faktoren.append("Fiber optic Kunden haben höchste Churn Rate")
+    if monthly > 70:
+        faktoren.append("Hohe monatliche Kosten erhöhen Churn-Risiko")
 
     if faktoren:
         for f in faktoren:

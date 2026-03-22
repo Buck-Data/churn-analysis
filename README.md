@@ -1,72 +1,127 @@
 # Customer Churn Analysis
 
-## Was ist das Projekt?
+Warum kündigen Kunden und lässt sich das vorhersagen, bevor es passiert?
 
-Dieses Projekt analysiert, warum Kunden eines Telekommunikationsunternehmens kündigen. Ziel war es, aus echten Kundendaten herauszufinden welche Faktoren am stärksten mit Churn zusammenhängen und darauf basierend ein Modell zu bauen, das gefährdete Kunden frühzeitig erkennt.
+Diese Frage stand am Anfang des Projekts. Das Ergebnis ist eine vollständige Analyse des Telco Customer Churn Datasets, drei trainierte Machine-Learning-Modelle und eine interaktive Streamlit-App, mit der sich das Abwanderungsrisiko einzelner Kunden in Echtzeit berechnen lässt.
 
-Die Analyse basiert auf dem Telco Customer Churn Dataset von Kaggle mit 7043 Kunden und 21 Features.
+---
+
+## Hintergrund
+
+Das zugrunde liegende Dataset stammt von Kaggle und wurde ursprünglich von IBM Watson Analytics bereitgestellt. Es enthält Daten von **7.043 Kunden** eines US-amerikanischen Telekommunikationsanbieters mit demografischen Informationen, genutzten Services, Vertragslaufzeiten und der entscheidenden Variable: Hat der Kunde gekündigt oder nicht?
+
+27% der Kunden im Dataset haben gekündigt. Das klingt nach einer überschaubaren Minderheit, ist aber aus Unternehmenssicht ein erheblicher Verlust. Neukundengewinnung ist typischerweise fünf bis sieben Mal teurer als Bestandskundenpflege.
+
+---
+
+## Was steckt in diesem Repo?
+
+Das Projekt ist in drei Teile gegliedert, die aufeinander aufbauen.
+
+**Explorative Datenanalyse** (`notebooks/01_EDA.ipynb`)
+Hier geht es darum, das Dataset wirklich zu verstehen. Welche Variablen hängen mit Churn zusammen? Wo sind die stärksten Signale? Das Notebook enthält alle Visualisierungen und die ersten Business-Insights.
+
+**Modellentwicklung** (`notebooks/02_modeling.ipynb`)
+Drei Modelle werden trainiert und direkt miteinander verglichen: Logistic Regression, Random Forest und XGBoost. Am Ende gibt es einen klaren Gewinner mit einer ausführlichen Begründung.
+
+**Interaktive Streamlit-App** (`app.py`)
+Das trainierte Modell ist in eine Web-App eingebettet. Wer wissen möchte, ob ein konkreter Kunde gefährdet ist, gibt einfach die relevanten Parameter ein und bekommt sofort einen Risiko-Score zurück.
 
 ---
 
 ## Ergebnisse auf einen Blick
 
-Nach der Analyse haben sich fünf klare Muster herauskristallisiert:
+Fünf Faktoren erklären den Großteil des Churns.
 
-Kunden mit Monatskontrakten kündigen mit einer Rate von ca. 43%, während Jahreskunden nur bei 11% liegen. Das ist der stärkste einzelne Faktor im gesamten Dataset.
+**Vertragstyp** ist der mit Abstand stärkste Faktor. Kunden mit Monatsvertrag kündigen zu 43%, bei Jahresverträgen sind es 11% und bei Zweijahresverträgen nur noch 3%. Wer langfristig bindet, verliert kaum Kunden.
 
-Churner zahlen im Median 80 USD pro Monat, verglichen mit 65 USD bei treuen Kunden. Günstigere Kunden bleiben deutlich loyaler.
+**Monatliche Kosten** spielen ebenfalls eine Rolle. Churner zahlen im Median 80 USD pro Monat, loyale Kunden 65 USD. Die Kombination aus hohen Kosten und fehlendem Mehrwert ist besonders riskant.
 
-Die ersten 12 Monate sind die gefährlichste Phase. Danach sinkt die Abwanderungsrate kontinuierlich. Kunden die länger als zwei Jahre bleiben kündigen kaum noch.
+**Die ersten 12 Monate** sind die kritischste Phase. Danach sinkt die Abwanderungsrate deutlich. Kunden die zwei Jahre oder länger bleiben kündigen praktisch kaum noch.
 
-Kunden ohne OnlineSecurity oder TechSupport churnen mit über 41%, während Kunden mit diesen Services nur bei 14 bis 15% liegen. Das ist der stärkste Hebel für Retention.
+**Schutz und Support-Services** machen einen erheblichen Unterschied. Ohne OnlineSecurity oder TechSupport liegt die Churn-Rate bei über 41%, mit diesen Services bei nur 14 bis 15%. Das ist der größte Retention-Hebel im gesamten Dataset.
 
-Kunden die per Electronic Check zahlen kündigen zu 45.3%, also fast dreimal häufiger als Kunden mit automatischen Zahlungsmethoden wie Kreditkarte oder Lastschrift.
-
----
-
-## Modell Performance
-
-Ich habe drei Modelle trainiert und miteinander verglichen:
-
-| Modell | AUC-ROC | Accuracy |
-|--------|---------|----------|
-| Logistic Regression | 0.840 | 80% |
-| Random Forest | 0.825 | 80% |
-| XGBoost | 0.823 | 78% |
-
-Das finale Modell ist Logistic Regression mit einem AUC-ROC Score von 0.84. Trotz einfacherer Architektur hat es die komplexeren Modelle geschlagen, was bei diesem Dataset mit vielen kategorischen Features und ca. 7000 Zeilen nicht ungewöhnlich ist.
+**Zahlungsmethode** ist überraschend aussagekräftig. Kunden die per Electronic Check zahlen kündigen zu 45,3%, fast dreimal häufiger als Kunden mit automatischen Zahlungsmethoden.
 
 ---
 
-## Business Empfehlungen
+## Modellvergleich
 
-Basierend auf den Findings würde ich folgende Maßnahmen vorschlagen:
+Drei Modelle wurden trainiert, alle auf denselben Daten (80/20 Split mit StandardScaling):
 
-Monatskunden sollten aktiv zu Jahresverträgen konvertiert werden, zum Beispiel durch Rabatte oder exklusive Vorteile bei längerer Bindung.
+| Modell | AUC-ROC | Accuracy | Precision | Recall |
+|---|---|---|---|---|
+| **Logistic Regression** | **0.840** | **80%** | **64%** | **55%** |
+| Random Forest | 0.825 | 80% | | |
+| XGBoost | 0.823 | 78% | | |
 
-Ein strukturiertes Onboarding in den ersten 90 Tagen würde Early Churn deutlich reduzieren. Konkret: proaktiver Kundenkontakt nach 30, 60 und 90 Tagen.
+Das finale Modell ist **Logistic Regression**, nicht trotz seiner Einfachheit sondern wegen ihr. Bei rund 7.000 Zeilen und vielen kategorischen Features neigen komplexere Modelle dazu, auf Trainingsartefakte zu fitten. Logistic Regression generalisiert hier besser, ist vollständig interpretierbar und liefert direkt Wahrscheinlichkeitswerte statt nur binäre Vorhersagen.
 
-OnlineSecurity und TechSupport sollten als Bundle aktiv vermarktet werden, da sie die Churn Rate fast dritteln.
+---
 
-Electronic Check Kunden sollten als Risikogruppe markiert werden. Ein Anreiz zum Wechsel auf automatische Zahlung wäre eine einfache und günstige Maßnahme.
+## Die Streamlit-App
+
+Das Modell ist in eine interaktive Web-App eingebettet, die sich lokal starten lässt:
+
+```bash
+streamlit run app.py
+```
+
+In der App gibt man für einen einzelnen Kunden folgende Parameter ein:
+
+- Vertragstyp (Monat, Jahr oder 2 Jahre)
+- Vertragslaufzeit in Monaten
+- Monatliche Kosten
+- Zahlungsmethode
+- Internet-Service-Typ
+- OnlineSecurity und TechSupport (ja oder nein)
+
+Das Modell berechnet daraus eine **Churn-Wahrscheinlichkeit in Prozent**, die farbcodiert angezeigt wird. Rot bei hohem Risiko, grün bei niedrigem. Zusätzlich werden die wichtigsten Risikofaktoren für den jeweiligen Kunden erklärt.
+
+Das macht die App besonders nützlich für Retention-Teams, die nicht mit rohen Modelloutputs arbeiten wollen, sondern schnelle und verständliche Einschätzungen brauchen.
+
+Unter diesen Link gelangt man direkt zur App:
+https://churn-analysis-buck.streamlit.app
+
+---
+
+## Business-Empfehlungen
+
+Die Analyse zeigt, dass gezieltes Handeln auf wenigen Hebeln schon viel bewirken kann.
+
+**Jahresverträge aktiv bewerben.** Ein Rabatt oder ein kleines Incentive kann einen Monatskunden zu einem Jahreskunden machen und die Churn-Wahrscheinlichkeit fast vierteln.
+
+**Strukturiertes Onboarding in den ersten 90 Tagen.** Proaktiver Kundenkontakt nach 30, 60 und 90 Tagen würde Early Churn deutlich reduzieren. Der erste Monat entscheidet oft.
+
+**OnlineSecurity und TechSupport als Bundle vermarkten.** Diese Services halbieren die Churn-Rate, was ein starkes Argument für aktives Upselling direkt beim Vertragsabschluss ist.
+
+**Electronic-Check-Kunden als Risikogruppe markieren.** Ein gezielter Anreiz zum Wechsel auf automatische Zahlung ist eine einfache Maßnahme mit messbarer Wirkung.
 
 ---
 
 ## Projektstruktur
 
 ```
-customer-churn-analysis/
+churn-analysis/
+│
+├── app.py                        # Streamlit-App (Echtzeit-Risikovorhersage)
 │
 ├── data/
-│   ├── raw/                  
-│   └── processed/            
+│   └── raw/
+│       └── Telco_Customer_Churn.csv
 │
 ├── notebooks/
-│   ├── 01_EDA.ipynb
-│   └── 02_modeling.ipynb
+│   ├── 01_EDA.ipynb              # Explorative Datenanalyse
+│   └── 02_modeling.ipynb         # Modelltraining und Vergleich
+│
+├── models/                       # Gespeicherte Modelle (.pkl)
+│   ├── logistic_regression_model.pkl
+│   ├── random_forest_model.pkl
+│   ├── xgboost_model.pkl
+│   └── scaler.pkl
 │
 ├── reports/
-│   └── figures/              
+│   └── figures/                  # Alle generierten Visualisierungen
 │
 ├── requirements.txt
 └── README.md
@@ -74,11 +129,11 @@ customer-churn-analysis/
 
 ---
 
-## Installation
+## Installation und Start
 
 ```bash
 git clone https://github.com/Buck-Data/customer-churn-analysis.git
-cd customer-churn-analysis
+cd churn-analysis
 
 python -m venv venv
 source venv/bin/activate        # Mac/Linux
@@ -87,11 +142,21 @@ venv\Scripts\activate           # Windows
 pip install -r requirements.txt
 ```
 
+Notebooks starten:
+```bash
+jupyter notebook
+```
+
+Streamlit-App starten:
+```bash
+streamlit run app.py
+```
+
 ---
 
 ## Tech Stack
 
-Python 3.11, pandas, numpy, matplotlib, seaborn, scikit-learn, xgboost
+Python 3.11, pandas, numpy, scikit-learn, XGBoost, matplotlib, seaborn, Streamlit, Jupyter
 
 ---
 
