@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import pickle
 
-with open('models/churn_model.pkl', 'rb') as f:
+with open('models/logistic_regression_model.pkl', 'rb') as f:
     modell = pickle.load(f)
 
 with open('models/scaler.pkl', 'rb') as f:
